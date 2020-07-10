@@ -175,7 +175,7 @@ public class Controller {
     void secondPlayerMove() {
         if(player2bot){
             Algorithm algorithm = new Algorithm(player2Color,gameManager,this);
-            Step step  = algorithm.minimax(gameManager.getBoard(),3,Integer.MIN_VALUE,Integer.MAX_VALUE,true,new Step());
+            Step step  = algorithm.minimax(gameManager.getBoard(),4,Integer.MIN_VALUE,Integer.MAX_VALUE,true,new Step());
 
             System.out.println("maxval = " + step.getValue());
             setSelectedPiece(gameManager.getBoard().getField(step.getPositionID()).getPiece());
