@@ -18,7 +18,9 @@ public class Main {
         gameManager.setController(controller);
 
         this.window = new Window(gameManager,controller);
+        controller.setWindow(window);
         window.repaint();
+        controller.firstPlayerMove();
 
     }
 }

@@ -12,4 +12,11 @@ public enum PieceColor {
     public String getValue() {
         return value;
     }
+
+    public PieceColor reverse(){
+        if (this==White)
+            return Black;
+        else
+            return White;
+    }
 }

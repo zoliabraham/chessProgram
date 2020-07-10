@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Knight extends Piece{
     public Knight(PieceColor pieceColor, Vector forward, Board board) {
-        super("knight",forward,board);
+        super("knight",3,forward,board);
         this.pieceColor = pieceColor;
     }
 
@@ -44,5 +44,29 @@ public class Knight extends Piece{
     @Override
     public boolean isMovePossible(Field field) {
         return false;
+    }
+
+    @Override
+    public ArrayList<Field> getPossibleMovesIfDefend() {
+        ArrayList<Field> possibleMoves = new ArrayList<>();
+        for (Vector v: getMoveVectors()) {
+            Field target = getFieldInDirection(v);
+            if(target!=null)
+                possibleMoves.add(target);
+        }
+        return possibleMoves;
+    }
+
+    @Override
+    public Piece copy(Board newBoard) {
+        Knight newKnight = new Knight(this.pieceColor,this.forward,newBoard);
+        newKnight.pieceColor = pieceColor;
+        newKnight.value = value;
+        newKnight.field = newBoard.getField(board.getFields().indexOf(getField()));
+        newKnight.id = id;
+        newKnight.x = x;
+        newKnight.y = y;
+        newKnight.firstStep = firstStep;
+        return newKnight;
     }
 }

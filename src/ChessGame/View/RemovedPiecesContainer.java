@@ -5,8 +5,6 @@ import ChessGame.Pieces.Piece;
 import ChessGame.Pieces.PieceColor;
 import ChessGame.Vector;
 
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 public class RemovedPiecesContainer extends Renderable{
@@ -25,11 +23,6 @@ public class RemovedPiecesContainer extends Renderable{
     @Override
     public void draw(DrawInfo drawInfo) {
         update();
-        if(active) {
-            drawInfo.g2d.setColor(new Color(213, 176, 21, 255));
-            drawInfo.g2d.setStroke(new BasicStroke(3));
-            drawInfo.g2d.draw(new RoundRectangle2D.Float(position.x, position.y, size.x, size.y, 10, 10));
-        }
         for (Renderable r: pieceRenderables) {
             r.draw(drawInfo);
         }
@@ -37,10 +30,6 @@ public class RemovedPiecesContainer extends Renderable{
 
     private void update() {
         Piece selected = gameManager.getController().getSelectedPiece();
-        if(selected != null && selected.getPieceColor()==pieceColor && gameManager.getController().isTradePawn())
-            active = true;
-        else
-            active = false;
         pieceRenderables.clear();
         int i=0;
         Vector pieceSize = new Vector(size.x,size.x);

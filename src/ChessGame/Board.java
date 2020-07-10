@@ -1,10 +1,13 @@
 package ChessGame;
 
+import ChessGame.AILogic.Step;
 import ChessGame.Pieces.*;
 
 import java.util.ArrayList;
 
 public class Board {
+    boolean canTradePawn = false;
+    boolean gameOver = false;
     ArrayList<Field> fields;
     ArrayList<Piece> removedPeaces = new ArrayList<>();
 
@@ -14,6 +17,19 @@ public class Board {
             fields.add(new Field(Integer.toString(i/8) + Integer.toString(i%8), new Vector((int)i%8,(int)i/8),this));
         }
         placeStartPieces();
+    }
+
+    public Board(Board oldBoard){
+        this.gameOver = oldBoard.gameOver;
+        this.fields = new ArrayList<>();
+        for (Field field: oldBoard.fields) {
+            Field newField = new Field(field,this);
+            fields.add(newField);
+            Piece tocopy = field.getPiece();
+            if(tocopy!=null)
+                newField.setPiece(tocopy.copy(this));
+
+        }
     }
 
 
@@ -106,5 +122,27 @@ public class Board {
 
     public ArrayList<Piece> getRemovedPeaces() {
         return removedPeaces;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
+    public Board simulateStep(Step step) {
+        Board newBoard = new Board(this);
+        newBoard.getFields().get(step.getPositionID()).getPiece().moveToField(newBoard.getFields().get(step.getTargetID()));
+        return newBoard;
+    }
+
+    public boolean mustPromotePawn() {
+        return canTradePawn;
+    }
+
+    public void setCanTradePawn(boolean canTradePawn) {
+        this.canTradePawn = canTradePawn;
     }
 }

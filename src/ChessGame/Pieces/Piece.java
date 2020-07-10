@@ -7,6 +7,7 @@ import ChessGame.Vector;
 import java.util.ArrayList;
 
 public abstract class Piece {
+    int value;
     protected PieceColor pieceColor;
     protected Field field;
     protected String name;
@@ -17,8 +18,9 @@ public abstract class Piece {
     Board board;
     boolean firstStep = true;
 
-    public Piece(String name, Vector forward, Board board) {
+    public Piece(String name,int value, Vector forward, Board board) {
         this.name = name;
+        this.value = value;
         this.forward = forward;
         this.board = board;
     }
@@ -87,12 +89,12 @@ public abstract class Piece {
     ArrayList<Field> getPossibleFieldsInDirections(ArrayList<Vector> vectors) {
         ArrayList<Field> possibleMoves = new ArrayList<>();
         for (Vector direction: vectors) {
-            possibleMoves.addAll(getPossibleFieldsInDirection(direction));
+            possibleMoves.addAll(getPossibleFieldsInDirectionAtack(direction));
         }
         return possibleMoves;
     }
 
-    ArrayList<Field> getPossibleFieldsInDirection(Vector direction) {
+    ArrayList<Field> getPossibleFieldsInDirectionAtack(Vector direction) {
         ArrayList<Field> possibleMoves = new ArrayList<>();
         int i=2;
         Field target = getFieldInDirection(direction.muliply(1));
@@ -111,7 +113,36 @@ public abstract class Piece {
         return possibleMoves;
     }
 
+    ArrayList<Field> getPossibleFieldsInDirectionDefend(Vector direction) {
+        ArrayList<Field> possibleMoves = new ArrayList<>();
+        int i=2;
+        Field target = getFieldInDirection(direction.muliply(1));
+        boolean canContinue= target!=null && target.isEmpty();
+        while (canContinue){
+            possibleMoves.add(target);
+
+            Vector d = direction.muliply(i);
+            target = getFieldInDirection(d);
+            canContinue = target!=null && target.isEmpty();
+            i++;
+        }
+
+        return possibleMoves;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public boolean isFirstStep() {
         return firstStep;
+    }
+
+    public abstract ArrayList<Field> getPossibleMovesIfDefend();
+
+    public abstract Piece copy(Board newBoard);
+
+    public Vector getForward() {
+        return forward;
     }
 }

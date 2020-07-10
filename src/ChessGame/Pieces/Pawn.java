@@ -1,7 +1,6 @@
 package ChessGame.Pieces;
 
 import ChessGame.Board;
-import ChessGame.Controller;
 import ChessGame.Field;
 import ChessGame.Vector;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 public class Pawn extends Piece {
 
     public Pawn(PieceColor pieceColor, Vector forward, Board board) {
-        super("pawn",forward, board);
+        super("pawn",1,forward, board);
         name = "pawn";
         this.pieceColor = pieceColor;
     }
@@ -41,15 +40,65 @@ public class Pawn extends Piece {
         if (target != null && !target.isEmpty() && target.getPiece().getPieceColor()!=pieceColor)
             possibleMoves.add(target);
 
-        if(getField().getPosition().y==0||getField().getPosition().y==7){
-            Controller.tradePawn = true;
-        }
-
         return possibleMoves;
     }
 
     @Override
     public boolean isMovePossible(Field field) {
         return false;
+    }
+
+    @Override
+    public ArrayList<Field> getPossibleMovesIfDefend() {
+        ArrayList<Field> defendSteps = new ArrayList<>();
+        Field target = getFieldInDirection(new Vector(-1, 1));
+        if(target!=null){
+            defendSteps.add(target);
+        }
+        target = getFieldInDirection(new Vector(1, 1));
+        if(target!=null){
+            defendSteps.add(target);
+        }
+        return defendSteps;
+    }
+
+    @Override
+    public Piece copy(Board newBoard) {
+        Pawn newPawn = new Pawn(this.pieceColor,this.forward,newBoard);
+        newPawn.pieceColor = pieceColor;
+        newPawn.value = value;
+        newPawn.field = newBoard.getField(board.getFields().indexOf(getField()));
+        newPawn.id = id;
+        newPawn.x = x;
+        newPawn.y = y;
+        newPawn.firstStep = firstStep;
+        return newPawn;
+    }
+
+    @Override
+    public int getValue() {
+        if(getField().getPosition().y==0 || getField().getPosition().y==0) {
+            return 9;
+        }
+
+        int startY = 0;
+        if(forward.y == 1)
+            startY = 6;
+        else
+            startY = 1;
+
+        int value = 1;
+        if(Math.abs(startY - getField().getPosition().y)!=0){
+            value++;
+        }
+        return value;
+    }
+
+    @Override
+    public void moveToField(Field field) {
+        super.moveToField(field);
+        if(getField().getPosition().y==0||getField().getPosition().y==7){
+            board.setCanTradePawn(true);
+        }
     }
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class King extends Piece {
     public King(PieceColor pieceColor, Vector forward, Board board) {
-        super("king",forward,board);
+        super("king",10000, forward,board);
         name = "king";
         this.pieceColor=pieceColor;
     }
@@ -20,7 +20,7 @@ public class King extends Piece {
 
         for (Vector v: vectors) {
             Field target = getFieldInDirection(v);
-            if(target!=null && !target.isAttacked(pieceColor)){
+            if(target!=null && !target.isDefended(pieceColor.reverse())){
                 if(target.isEmpty() || target.isEnemy(pieceColor)){
                     possibleMoves.add(target);
                 }
@@ -53,7 +53,7 @@ public class King extends Piece {
         if(castleField!=null) {
             Piece rook = castleField.getPiece();
             if (!isInCheck() && isFirstStep() && rook != null && rook.isFirstStep()) {
-                ArrayList<Field> fields = getPossibleFieldsInDirection(castlingVectors.get(0).getDirection()); //left
+                ArrayList<Field> fields = getPossibleFieldsInDirectionAtack(castlingVectors.get(0).getDirection()); //left
                 if (fields.size() == 3) {
                     for (int i = 0; i < 2; i++) {
                         if (fields.get(i).isAttacked(pieceColor)) {
@@ -72,7 +72,7 @@ public class King extends Piece {
         if(castleField!=null) {
             Piece rook = castleField.getPiece();
             if (!isInCheck() && isFirstStep() && rook != null && rook.isFirstStep()) {
-                ArrayList<Field> fields = getPossibleFieldsInDirection(castlingVectors.get(1).getDirection());
+                ArrayList<Field> fields = getPossibleFieldsInDirectionAtack(castlingVectors.get(1).getDirection());
                 if (fields.size() == 2) {
                     for (int i = 0; i < 1; i++) {
                         if (fields.get(i).isAttacked(pieceColor)) {
@@ -122,6 +122,35 @@ public class King extends Piece {
                 getFieldInDirection(new Vector(1,0)).getPiece().moveToField(getFieldInDirection(new Vector(-1,0)));
             }
         }
+    }
 
+    @Override
+    public ArrayList<Field> getPossibleMovesIfDefend() {
+        ArrayList<Field> possibleMoves = new ArrayList<>();
+        for (Vector direction: getMoveVectors()) {
+            Field friendField = getFieldInDirection(direction);
+            if(friendField!=null && friendField.isAttacked(pieceColor)){
+                possibleMoves.add(friendField);
+            }
+        }
+        return possibleMoves;
+    }
+
+    @Override
+    public Piece copy(Board newBoard) {
+        King newKing = new King(this.pieceColor,this.forward,newBoard);
+        newKing.pieceColor = pieceColor;
+        newKing.value = value;
+        newKing.field = newBoard.getField(board.getFields().indexOf(getField()));
+        newKing.id = id;
+        newKing.x = x;
+        newKing.y = y;
+        newKing.firstStep = firstStep;
+        return newKing;
+    }
+
+    @Override
+    public void removeFromBoard() {
+        board.setGameOver(true);
     }
 }

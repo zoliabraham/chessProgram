@@ -28,17 +28,23 @@ public class FieldRenderable extends Renderable{
         update();
         drawInfo.g2d.setColor(color);
         drawInfo.g2d.fill(new Rectangle2D.Float(position.x,position.y,size.x,size.y));
+        float strokeWidth=4;
 
-        if(field.isMarkedPassible()){
+        if(field.isMarkedPossible()){
             if(field.getPiece()!=null){
                 drawInfo.g2d.setColor(new Color(196, 0, 0, 255));
-                drawInfo.g2d.setStroke(new BasicStroke(4));
+                drawInfo.g2d.setStroke(new BasicStroke(strokeWidth));
             }
             else{
                 drawInfo.g2d.setColor(new Color(255, 208, 3, 255));
                 drawInfo.g2d.setStroke(new BasicStroke(4));
             }
-            drawInfo.g2d.draw(new Rectangle2D.Float(position.x,position.y,size.x,size.y));
+            drawInfo.g2d.draw(new Rectangle2D.Float(position.x+strokeWidth/2,position.y+strokeWidth/2,size.x - strokeWidth,size.y- strokeWidth));
+        }
+        else if(field.isMarkMoved()){
+            drawInfo.g2d.setColor(new Color(42, 189, 61, 255));
+            drawInfo.g2d.setStroke(new BasicStroke(4));
+            drawInfo.g2d.draw(new Rectangle2D.Float(position.x+strokeWidth/2,position.y+strokeWidth/2,size.x - strokeWidth,size.y- strokeWidth));
         }
         renderContainedrenderables(drawInfo);
     }
