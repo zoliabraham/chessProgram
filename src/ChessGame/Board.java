@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class Board {
     boolean canTradePawn = false;
     boolean gameOver = false;
+    boolean check = false;
+    PieceColor winColor;
     ArrayList<Field> fields;
     ArrayList<Piece> removedPeaces = new ArrayList<>();
 
@@ -22,6 +24,7 @@ public class Board {
     public Board(Board oldBoard){
         this.gameOver = oldBoard.gameOver;
         this.fields = new ArrayList<>();
+        this.check = oldBoard.check;
         for (Field field: oldBoard.fields) {
             Field newField = new Field(field,this);
             fields.add(newField);
@@ -144,5 +147,18 @@ public class Board {
 
     public void setCanTradePawn(boolean canTradePawn) {
         this.canTradePawn = canTradePawn;
+    }
+
+    public void setCheck(boolean check, PieceColor checkGiver) {
+        this.check = check;
+        this.winColor = checkGiver;
+    }
+
+    public PieceColor getWinColor() {
+        return winColor;
+    }
+
+    public boolean isCheck() {
+        return check;
     }
 }

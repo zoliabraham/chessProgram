@@ -69,4 +69,9 @@ public class Knight extends Piece{
         newKnight.firstStep = firstStep;
         return newKnight;
     }
+
+    @Override
+    public int getValue() {
+        return super.getValue() + getPossibleMoves().size()/4;
+    }
 }

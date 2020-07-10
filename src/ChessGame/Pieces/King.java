@@ -15,6 +15,7 @@ public class King extends Piece {
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+
         ArrayList<Field> possibleMoves = new ArrayList<>();
         ArrayList<Vector> vectors = getMoveVectors();
 

@@ -48,6 +48,24 @@ public abstract class Piece {
         x = id%8;
         y = id/8;
         firstStep = false;
+        checkForCheckAndCheckMate();
+    }
+
+    protected Piece checkForCheckAndCheckMate(){
+        for (Field f: board.getFields()) {
+            Piece p = f.getPiece();
+            if(p!=null && p.getName().equals("king")){
+                if(f.isAttacked(p.getPieceColor())){
+                    if(board.isCheck()){
+                        board.setGameOver(true);
+                    }
+                    board.setCheck(true,p.pieceColor.reverse());
+                    return p;
+                }
+            }
+        }
+        board.setCheck(false,null);
+        return null;
     }
 
     public void placeToField(Field field){

@@ -15,8 +15,8 @@ public class Bishop extends Piece {
     @Override
     public ArrayList<Field> getPossibleMoves() {
         ArrayList<Vector> vectors = getMoveVectors();
-
-        return getPossibleFieldsInDirections(vectors);
+        ArrayList<Field> possibleMoves = getPossibleFieldsInDirections(vectors);
+        return possibleMoves;
     }
 
     private ArrayList<Vector> getMoveVectors() {

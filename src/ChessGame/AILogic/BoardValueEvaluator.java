@@ -21,6 +21,9 @@ public class BoardValueEvaluator {
 
 
     public static int evaluate(Board board, PieceColor pieceColor) {
+        if(board.isGameOver()){
+            return checkWin(board, pieceColor);
+        }
         int boardValue = 0;
         boardValue += getBoardValues(board, pieceColor);
         Random r = new Random();
@@ -116,5 +119,13 @@ public class BoardValueEvaluator {
             }
         }
         return checkValue;
+    }
+
+    private static int checkWin(Board board, PieceColor pieceColor) {
+        if(board.getWinColor()==pieceColor){
+            return Integer.MAX_VALUE;
+        }
+        else
+            return Integer.MIN_VALUE;
     }
 }

@@ -138,9 +138,8 @@ public class Window extends JPanel {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         DrawInfo drawInfo = new DrawInfo(g2d, this);
-        if(controller.isGameEnded()){
+        if(controller.isGameEnded()) {
             endgame = true;
-            showMessage("Matt");
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         renderer.render(drawInfo);
@@ -195,6 +194,13 @@ public class Window extends JPanel {
     public void showMessage(String message){
         messageLabel.setText(message);
         messageLabel.setVisible(true);
+        revalidate();
+        repaint();
+    }
+
+    public void hideMessage(){
+        messageLabel.setText("");
+        messageLabel.setVisible(false);
         revalidate();
         repaint();
     }

@@ -1,6 +1,7 @@
 package ChessGame;
 
 import ChessGame.AILogic.Algorithm;
+import ChessGame.AILogic.BoardValueEvaluator;
 import ChessGame.AILogic.Step;
 import ChessGame.Pieces.*;
 import ChessGame.View.Window;
@@ -8,8 +9,8 @@ import ChessGame.View.Window;
 import java.util.ArrayList;
 
 public class Controller {
-    final boolean player1bot = true;
-    final boolean player2bot = false;
+    final boolean player1bot = false;
+    final boolean player2bot = true;
 
     GameManager gameManager;
     Piece selectedPiece;
@@ -63,9 +64,13 @@ public class Controller {
         if(gameManager.getBoard().isGameOver()){
             endGame();
         }
-
+        else if(gameManager.getBoard().isCheck()){
+            showCheck(true);
+        } else {
+            showCheck(false);
+        }
         window.paintImmediately(0,0,window.getWidth(),window.getHeight());
-        //System.out.println("BoardValue = " + BoardValueEvaluator.evaluate(gameManager.getBoard(),PieceColor.White));
+        System.out.println("BoardValue = " + BoardValueEvaluator.evaluate(gameManager.getBoard(),PieceColor.White));
         if(!gameManager.getBoard().mustPromotePawn())
             switchActivePlayer();
         else {
@@ -78,6 +83,8 @@ public class Controller {
             }
         }
     }
+
+
 
     private void preparePromotePawn() {
         findPawnToPromote();
@@ -168,7 +175,11 @@ public class Controller {
     void secondPlayerMove() {
         if(player2bot){
             Algorithm algorithm = new Algorithm(player2Color,gameManager,this);
-            int maxVal = algorithm.minimax(gameManager.getBoard(),2,Integer.MIN_VALUE,Integer.MAX_VALUE,true);
+            Step step  = algorithm.minimax(gameManager.getBoard(),3,Integer.MIN_VALUE,Integer.MAX_VALUE,true,new Step());
+
+            System.out.println("maxval = " + step.getValue());
+            setSelectedPiece(gameManager.getBoard().getField(step.getPositionID()).getPiece());
+            moveToField(gameManager.getBoard().getField(step.getTargetID()));
         }
     }
 
@@ -178,7 +189,15 @@ public class Controller {
 
     private void endGame() {
         gameEnded = true;
-        System.out.println("Matt");
+        window.showMessage("Matt : " + gameManager.getBoard().getWinColor().getValue() + " nyert");
+        window.repaint();
+    }
+
+    private void showCheck(boolean b) {
+        if(b)
+            window.showMessage("Sakk");
+        else
+            window.hideMessage();
         window.repaint();
     }
 
