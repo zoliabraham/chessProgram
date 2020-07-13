@@ -14,8 +14,13 @@ public class Bishop extends Piece {
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+        if(possibleStepsCache!=null){
+            return possibleStepsCache;
+        }
+
         ArrayList<Vector> vectors = getMoveVectors();
         ArrayList<Field> possibleMoves = getPossibleFieldsInDirections(vectors);
+        addAllPossibleStepsToCache(possibleMoves);
         return possibleMoves;
     }
 
@@ -35,6 +40,8 @@ public class Bishop extends Piece {
 
     @Override
     public ArrayList<Field> getPossibleMovesIfDefend() {
+
+
         ArrayList<Field> possibleMoves = new ArrayList<>();
         for (Vector direction: getMoveVectors()) {
             ArrayList<Field> fieldsInDirection = getPossibleFieldsInDirectionDefend(direction);
@@ -60,5 +67,12 @@ public class Bishop extends Piece {
         newBishop.y = y;
         newBishop.firstStep = firstStep;
         return newBishop;
+    }
+
+    @Override
+    public float getValue() {
+        float value =  super.getValue();
+        value = value + getPossibleMoves().size()*0.2f;
+        return value;
     }
 }

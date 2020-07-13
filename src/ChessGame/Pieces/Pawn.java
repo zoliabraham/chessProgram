@@ -16,6 +16,10 @@ public class Pawn extends Piece {
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+        if(possibleStepsCache!=null){
+            return possibleStepsCache;
+        }
+
         ArrayList<Field> possibleMoves = new ArrayList<>();
 
         //forward
@@ -40,6 +44,7 @@ public class Pawn extends Piece {
         if (target != null && !target.isEmpty() && target.getPiece().getPieceColor()!=pieceColor)
             possibleMoves.add(target);
 
+        addAllPossibleStepsToCache(possibleMoves);
         return possibleMoves;
     }
 
@@ -76,7 +81,7 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public int getValue() {
+    public float getValue() {
         if(getField().getPosition().y==0 || getField().getPosition().y==0) {
             return 9;
         }
@@ -88,8 +93,8 @@ public class Pawn extends Piece {
             startY = 1;
 
         int value = 1;
-        if(Math.abs(startY - getField().getPosition().y)!=0){
-            value++;
+        if(Float.compare(Math.abs(startY - getField().getPosition().y),0.f)==0){
+            value += Math.abs(startY - getField().getPosition().y)*0.2f;
         }
         return value;
     }

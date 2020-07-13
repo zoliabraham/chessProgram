@@ -2,15 +2,19 @@ package ChessGame;
 
 import ChessGame.AILogic.Algorithm;
 import ChessGame.AILogic.BoardValueEvaluator;
+import ChessGame.AILogic.MultithreadAlgorithm;
 import ChessGame.AILogic.Step;
 import ChessGame.Pieces.*;
 import ChessGame.View.Window;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.concurrent.ForkJoinPool;
 
 public class Controller {
-    final boolean player1bot = false;
-    final boolean player2bot = true;
+    final boolean player1bot = true;
+    final boolean player2bot = false;
 
     GameManager gameManager;
     Piece selectedPiece;
@@ -52,8 +56,6 @@ public class Controller {
         }
     }
 
-    //TODO ha a király sakkban van
-
     private void moveToField(Field field) {
         clearMarkedMoveds();
         selectedPiece.getField().setMarkMoved(true);
@@ -70,7 +72,6 @@ public class Controller {
             showCheck(false);
         }
         window.paintImmediately(0,0,window.getWidth(),window.getHeight());
-        System.out.println("BoardValue = " + BoardValueEvaluator.evaluate(gameManager.getBoard(),PieceColor.White));
         if(!gameManager.getBoard().mustPromotePawn())
             switchActivePlayer();
         else {
@@ -163,10 +164,24 @@ public class Controller {
             int maxVal = algorithm.minimax(gameManager.getBoard(),5 ,Integer.MIN_VALUE , Integer.MAX_VALUE ,true);
             System.out.println("maxval = " + maxVal);*/
 
-            Algorithm algorithm = new Algorithm(player1Color,gameManager,this);
+            /*LocalDateTime old = LocalDateTime.now();
+            Algorithm.iterations=0;
+            Algorithm algorithm = new Algorithm(player1Color);
             Step step = algorithm.minimax(gameManager.getBoard(), 4 ,Integer.MIN_VALUE , Integer.MAX_VALUE ,true, new Step());
-            System.out.println("maxval = " + step.getValue());
+            LocalDateTime now = LocalDateTime.now();
+            long diff = ChronoUnit.MILLIS.between(old, now);
+            System.out.println("old = " + step.getValue() + ", time taken = " + diff + ", iterations = " + Algorithm.iterations);*/
 
+            LocalDateTime old = LocalDateTime.now();
+            MultithreadAlgorithm.iterations=0;
+            MultithreadAlgorithm multithreadAlgorithm = new MultithreadAlgorithm(player1Color,gameManager.getBoard(),4,Integer.MIN_VALUE,Integer.MAX_VALUE,true,new Step());
+            ForkJoinPool forkJoinPool = new ForkJoinPool();
+            Step step = forkJoinPool.invoke(multithreadAlgorithm);
+            LocalDateTime now = LocalDateTime.now();
+            long diff = ChronoUnit.MILLIS.between(old, now);
+            System.out.println("new = " + step.getValue() + ", time taken = " + diff + ", iterations = " + MultithreadAlgorithm.iterations);
+
+            System.out.println(BoardValueEvaluator.evaluate(gameManager.getBoard(),player1Color));
             setSelectedPiece(gameManager.getBoard().getField(step.getPositionID()).getPiece());
             moveToField(gameManager.getBoard().getField(step.getTargetID()));
         }
@@ -174,7 +189,7 @@ public class Controller {
 
     void secondPlayerMove() {
         if(player2bot){
-            Algorithm algorithm = new Algorithm(player2Color,gameManager,this);
+            Algorithm algorithm = new Algorithm(player2Color);
             Step step  = algorithm.minimax(gameManager.getBoard(),4,Integer.MIN_VALUE,Integer.MAX_VALUE,true,new Step());
 
             System.out.println("maxval = " + step.getValue());

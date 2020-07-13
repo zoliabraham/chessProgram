@@ -161,4 +161,23 @@ public class Board {
     public boolean isCheck() {
         return check;
     }
+
+
+    public void clearAllPossibleStepsCache(){
+        for (Field f: fields) {
+            Piece piece = f.getPiece();
+            if(piece!=null){
+                piece.clearPossibleStepsCache();
+            }
+        }
+    }
+
+    public void updatePossibleStepsCache(){
+        for (Field f: fields) {
+            Piece piece = f.getPiece();
+            if(piece!=null){
+                piece.updatePossibleStepsToCache();
+            }
+        }
+    }
 }

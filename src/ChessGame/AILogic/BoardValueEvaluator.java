@@ -61,7 +61,7 @@ public class BoardValueEvaluator {
         int pieceValues = 0;
         Piece piece = field.getPiece();
         if (piece != null) {
-            int value = field.getPiece().getValue();
+            int value = (int) field.getPiece().getValue();
             if (piece.getPieceColor() == pieceColor)
                 pieceValues += value * pieceValueMultiplier;
             else
@@ -74,7 +74,7 @@ public class BoardValueEvaluator {
         int positionValues=0;
         Piece piece = field.getPiece();
         if(piece!=null){
-            int pieceValue = piece.getValue();
+            int pieceValue = (int)piece.getValue();
             if(piece.getPieceColor()==pieceColor){
                 if(field.isAttacked(pieceColor)) { //enemy atacking friends
                     positionValues -= pieceValue * field.getAtackingPieces(pieceColor).size() * defendOwnPieces;

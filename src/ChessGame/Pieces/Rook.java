@@ -9,14 +9,20 @@ import java.util.ArrayList;
 public class Rook extends Piece {
 
     public Rook(PieceColor pieceColor, Vector forward, Board board) {
-        super("rook",5,forward,board);
+        super("rook",6,forward,board);
         this.pieceColor = pieceColor;
     }
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+        if(possibleStepsCache!=null){
+            return possibleStepsCache;
+        }
         ArrayList<Vector> vectors = getMoveVectors();
-        return getPossibleFieldsInDirections(vectors);
+
+        ArrayList<Field> possibleMoves = getPossibleFieldsInDirections(vectors);
+        addAllPossibleStepsToCache(possibleMoves);
+        return possibleMoves;
     }
 
     private ArrayList<Vector> getMoveVectors() {
@@ -60,6 +66,13 @@ public class Rook extends Piece {
         newRook.y = y;
         newRook.firstStep = firstStep;
         return newRook;
+    }
+
+    @Override
+    public float getValue() {
+        float value = super.getValue();
+        value = value - Math.abs(getField().getPosition().x-3.5f)*0.3f + getPossibleMoves().size()*0.2f;
+        return value;
     }
 
 }

@@ -10,7 +10,7 @@ public class Step {
     int targetID;
     Field position;
     int positionID;
-    int maxValue = Integer.MIN_VALUE;
+    float maxValue = Integer.MIN_VALUE;
 
     public Step() {
     }
@@ -23,11 +23,11 @@ public class Step {
         targetID = board.getFields().indexOf(target);
     }
 
-    public int getValue() {
+    public float getValue() {
         return maxValue;
     }
 
-    public void setValue(int maxValue) {
+    public void setValue(float maxValue) {
         this.maxValue = maxValue;
     }
 

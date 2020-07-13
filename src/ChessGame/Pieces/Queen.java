@@ -8,16 +8,21 @@ import java.util.ArrayList;
 
 public class Queen extends Piece {
     public Queen(PieceColor pieceColor, Vector forward, Board board) {
-        super("queen",9,forward,board);
+        super("queen",11,forward,board);
         name = "queen";
         this.pieceColor = pieceColor;
     }
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+        if(possibleStepsCache!=null){
+            return possibleStepsCache;
+        }
         ArrayList<Vector> vectors = getMoveVectors();
 
-        return getPossibleFieldsInDirections(vectors);
+        ArrayList<Field> possibleMoves = getPossibleFieldsInDirections(vectors);
+        addAllPossibleStepsToCache(possibleMoves);
+        return possibleMoves;
     }
 
     private ArrayList<Vector> getMoveVectors() {
@@ -66,5 +71,12 @@ public class Queen extends Piece {
         newQueen.y = y;
         newQueen.firstStep = firstStep;
         return newQueen;
+    }
+
+    @Override
+    public float getValue() {
+        float value = super.getValue();
+        value = value - Math.abs(getField().getPosition().x-3.5f)*0.3f - Math.abs(getField().getPosition().y-3.5f)*0.3f + getPossibleMoves().size()*0.1f;
+        return value;
     }
 }

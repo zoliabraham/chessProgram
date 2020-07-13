@@ -8,13 +8,16 @@ import java.util.ArrayList;
 
 public class King extends Piece {
     public King(PieceColor pieceColor, Vector forward, Board board) {
-        super("king",10000, forward,board);
+        super("king",5, forward,board);
         name = "king";
         this.pieceColor=pieceColor;
     }
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+        if(possibleStepsCache!=null){
+            return possibleStepsCache;
+        }
 
         ArrayList<Field> possibleMoves = new ArrayList<>();
         ArrayList<Vector> vectors = getMoveVectors();
@@ -30,8 +33,7 @@ public class King extends Piece {
 
         //castling
         possibleMoves.addAll(getCastling());
-
-
+        addAllPossibleStepsToCache(possibleMoves);
         return possibleMoves;
     }
 
@@ -153,5 +155,15 @@ public class King extends Piece {
     @Override
     public void removeFromBoard() {
         board.setGameOver(true);
+    }
+
+    @Override
+    public float getValue() {
+        float value = super.getValue();
+        if(getField().isAttacked(pieceColor)){
+            value = 10000;
+        }
+        value = value + Math.abs(getField().getPosition().x-3.5f)*0.2f + Math.abs(getField().getPosition().y-3.5f)*0.1f;
+        return value;
     }
 }

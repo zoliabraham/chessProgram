@@ -7,7 +7,7 @@ import ChessGame.Vector;
 import java.util.ArrayList;
 
 public abstract class Piece {
-    int value;
+    float value;
     protected PieceColor pieceColor;
     protected Field field;
     protected String name;
@@ -17,6 +17,7 @@ public abstract class Piece {
     int y ;
     Board board;
     boolean firstStep = true;
+    ArrayList<Field> possibleStepsCache;
 
     public Piece(String name,int value, Vector forward, Board board) {
         this.name = name;
@@ -49,24 +50,23 @@ public abstract class Piece {
         y = id/8;
         firstStep = false;
         checkForCheckAndCheckMate();
+        board.updatePossibleStepsCache();
     }
 
     protected Piece checkForCheckAndCheckMate(){
         for (Field f: board.getFields()) {
             Piece p = f.getPiece();
             if(p!=null && p.getName().equals("king")){
-                if(f.isAttacked(p.getPieceColor())){
-                    if(board.isCheck()){
-                        board.setGameOver(true);
-                    }
+                /*if(f.isAttacked(p.getPieceColor())){
                     board.setCheck(true,p.pieceColor.reverse());
                     return p;
-                }
+                }*/
             }
         }
         board.setCheck(false,null);
         return null;
     }
+
 
     public void placeToField(Field field){
         if(this.field!=null){
@@ -144,11 +144,13 @@ public abstract class Piece {
             canContinue = target!=null && target.isEmpty();
             i++;
         }
+        if(target != null && !target.isEnemy(pieceColor))
+            possibleMoves.add(target);
 
         return possibleMoves;
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 
@@ -163,4 +165,30 @@ public abstract class Piece {
     public Vector getForward() {
         return forward;
     }
+
+    public ArrayList<Field> getPossibleStepsCache() {
+        return possibleStepsCache;
+    }
+
+    public void clearPossibleStepsCache(){
+        if(possibleStepsCache!=null){
+            possibleStepsCache.clear();
+        }
+    }
+
+    public void addAllPossibleStepsToCache(ArrayList<Field> possibleSteps){
+        if(possibleStepsCache==null) {
+            possibleStepsCache = new ArrayList<>();
+        }
+        else{
+            possibleStepsCache.clear();
+        }
+        possibleStepsCache.addAll(possibleSteps);
+    }
+
+    public void updatePossibleStepsToCache(){
+        possibleStepsCache = null;
+        getPossibleMoves();
+    }
+
 }

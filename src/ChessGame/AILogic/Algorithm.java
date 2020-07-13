@@ -1,9 +1,7 @@
 package ChessGame.AILogic;
 
 import ChessGame.Board;
-import ChessGame.Controller;
 import ChessGame.Field;
-import ChessGame.GameManager;
 import ChessGame.Pieces.Piece;
 import ChessGame.Pieces.PieceColor;
 
@@ -11,28 +9,25 @@ import java.util.ArrayList;
 
 public class Algorithm {
     PieceColor pieceColor;
-    GameManager gameManager;
-    Controller controller;
+    public static long iterations=0;
 
 
-    public Algorithm(PieceColor pieceColor, GameManager gameManager, Controller controller) {
+    public Algorithm(PieceColor pieceColor) {
         this.pieceColor = pieceColor;
-        this.gameManager = gameManager;
-        this.controller = controller;
     }
 
-    public int minimax(Board board, int depth, int alpha, int beta, boolean maximizingPlayer){
+    public float minimax(Board board, int depth, float alpha, float beta, boolean maximizingPlayer){
         if(depth == 0 || board.isGameOver()){
             return BoardValueEvaluator.evaluate(board,pieceColor);
         }
 
         if(maximizingPlayer){
-            int maxEval = Integer.MIN_VALUE;
+            float maxEval = Integer.MIN_VALUE;
             ArrayList<Step> possibleSteps = getPossibleSteps(true,board);
 
             for (Step step: possibleSteps) {
                 Board simulatedBoard = board.simulateStep(step);
-                int eval = minimax(simulatedBoard,depth-1,alpha,beta,false);
+                float eval = minimax(simulatedBoard,depth-1,alpha,beta,false);
                 maxEval = Math.max(maxEval,eval);
                 alpha = Math.max(alpha,eval);
                 if (beta <= alpha)
@@ -41,12 +36,12 @@ public class Algorithm {
             return maxEval;
         }
         else {
-            int minEval = Integer.MAX_VALUE;
+            float minEval = Integer.MAX_VALUE;
             ArrayList<Step> possibleSteps = getPossibleSteps(false,board);
 
             for (Step step: possibleSteps) {
                 Board simulatedBoard = board.simulateStep(step);
-                int eval = minimax(simulatedBoard,depth-1,alpha,beta,true);
+                float eval = minimax(simulatedBoard,depth-1,alpha,beta,true);
                 minEval = Math.min(minEval,eval);
                 beta = Math.min(beta,eval);
                 if (beta <= alpha)
@@ -57,9 +52,8 @@ public class Algorithm {
         }
     }
 
-
-
-    public Step minimax(Board board, int depth, int alpha, int beta, boolean maximizingPlayer, Step enterStep){
+    public Step minimax(Board board, int depth, float alpha, float beta, boolean maximizingPlayer, Step enterStep){
+        iterations++;
         if(depth == 0 || board.isGameOver()){
             enterStep.setValue(BoardValueEvaluator.evaluate(board,pieceColor));
             return enterStep;
@@ -87,7 +81,6 @@ public class Algorithm {
                 }
                 return maxEvalStep;
             } else {
-                int minEval = Integer.MAX_VALUE;
                 Step minEvalStep = null;
                 ArrayList<Step> possibleSteps = getPossibleSteps(false, board);
 

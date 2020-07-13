@@ -14,6 +14,9 @@ public class Knight extends Piece{
 
     @Override
     public ArrayList<Field> getPossibleMoves() {
+        if(possibleStepsCache!=null){
+            return possibleStepsCache;
+        }
         ArrayList<Field> possibleMoves = new ArrayList<>();
         ArrayList<Vector> vectors = getMoveVectors();
 
@@ -25,6 +28,7 @@ public class Knight extends Piece{
                 }
             }
         }
+        addAllPossibleStepsToCache(possibleMoves);
         return possibleMoves;
     }
 
@@ -71,7 +75,7 @@ public class Knight extends Piece{
     }
 
     @Override
-    public int getValue() {
-        return super.getValue() + getPossibleMoves().size()/4;
+    public float getValue() {
+        return super.getValue() + getPossibleMoves().size()/4.f;
     }
 }
